@@ -1,0 +1,13 @@
+.spinner {
+  display: flex !important;
+  position: fixed;
+  align-items: center;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  background: var(--surface-f);
+  opacity: 0.6;
+  transition: 0.4s ease;
+}
