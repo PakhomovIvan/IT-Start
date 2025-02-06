@@ -1,9 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
-import axios, { AxiosError } from 'axios'
+import axios from 'axios'
 import { Seminars } from '../../Common/Models/seminars/Seminars'
 import { SeminarsInitialState } from '../../Common/Models/seminars/SeminarsInitialState'
-import store from '../store'
-import { setToast } from './toastSlice'
 
 const initialState: SeminarsInitialState = {
   seminars: [],
@@ -65,19 +63,3 @@ export const selectSeminars = (state: { seminars: SeminarsInitialState }) =>
   state.seminars
 
 export default seminarsSlice.reducer
-
-axios.interceptors.response.use(
-  (response) => {
-    return response
-  },
-  (error) => {
-    if (axios.isAxiosError(error)) {
-      store.dispatch(setToast({ type: 'error', message: error.message }))
-      throw new AxiosError(error.message)
-    } else if (error instanceof Error) {
-      store.dispatch(setToast({ type: 'error', message: error.stack }))
-      throw new Error(error.stack)
-    }
-    throw error
-  }
-)
