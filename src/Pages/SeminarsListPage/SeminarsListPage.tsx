@@ -4,7 +4,11 @@ import { DataTable } from 'primereact/datatable'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Seminars } from '../../Common/Models/seminars/Seminars'
-import { fetchSeminars, selectSeminars } from '../../Store/slice/seminarsSlice'
+import {
+  deleteSeminar,
+  fetchSeminars,
+  selectSeminars,
+} from '../../Store/slice/seminarsSlice'
 import { hideSpinner, showSpinner } from '../../Store/slice/spinnerSlice'
 import { AppDispatch } from '../../Store/store'
 import './SeminarsListPage.scss'
@@ -31,7 +35,11 @@ const SeminarsListPage = () => {
     )
   }
 
-  const tableActionBody = () => {
+  const handleDeleteSeminar = (id: number) => {
+    dispatch(deleteSeminar(id))
+  }
+
+  const tableActionBody = (rowData: Seminars) => {
     return (
       <div className="actions">
         <Button
@@ -44,6 +52,7 @@ const SeminarsListPage = () => {
           type="button"
           icon="pi pi-trash"
           severity="danger"
+          onClick={() => handleDeleteSeminar(rowData.id)}
           rounded
         ></Button>
       </div>
@@ -53,10 +62,12 @@ const SeminarsListPage = () => {
   return (
     <div className="wrapper">
       <h1>Расписание семинаров</h1>
-      {!!seminars.seminars.length && (
+      {seminars && (
         <DataTable
           value={seminars.seminars}
           emptyMessage="Список семинаров пуст"
+          scrollable
+          scrollHeight="80vh"
         >
           <Column field="id" header="ID"></Column>
           <Column header="Фото" body={tableImageBody}></Column>

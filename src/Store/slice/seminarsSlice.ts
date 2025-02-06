@@ -12,18 +12,17 @@ const initialState: SeminarsInitialState = {
 export const fetchSeminars = createAsyncThunk(
   'seminars/fetchSeminars',
   async (url: string) => {
-    try {
-      const res = await axios.get<Seminars>(url)
-      return res.data
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        store.dispatch(setToast({ type: 'error', message: error.message }))
-        throw new AxiosError(error.message)
-      } else if (error instanceof Error) {
-        store.dispatch(setToast({ type: 'error', message: error.stack }))
-        throw new Error(error.stack)
-      }
-    }
+    const res = await axios.get<Seminars[]>(url)
+    return res.data
+  }
+)
+
+export const deleteSeminar = createAsyncThunk(
+  'seminars/deleteSeminar',
+  async (id: number) => {
+    const url = `${import.meta.env.VITE_API_URL}/${id}`
+    await axios.delete(url)
+    return id
   }
 )
 
@@ -31,10 +30,10 @@ const seminarsSlice = createSlice({
   name: 'seminars',
   initialState,
   reducers: {
-    deleteProduct: (state, action: PayloadAction<number>) => {
+    deleteSeminar: (state, action: PayloadAction<number>) => {
       return {
         ...state,
-        products: state.seminars.filter(
+        seminars: state.seminars.filter(
           (seminar) => seminar.id !== action.payload
         ),
       }
@@ -44,8 +43,16 @@ const seminarsSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(
       fetchSeminars.fulfilled,
-      (state: { seminars: Seminars[] }, action: PayloadAction<Seminars[]>) => {
+      (state, action: PayloadAction<Seminars[]>) => {
         state.seminars = action.payload
+      }
+    )
+    builder.addCase(
+      deleteSeminar.fulfilled,
+      (state, action: PayloadAction<number>) => {
+        state.seminars = state.seminars.filter(
+          (seminar) => seminar.id !== action.payload
+        )
       }
     )
   },
@@ -54,7 +61,23 @@ const seminarsSlice = createSlice({
 export const { reducer: seminarsReducer, actions: seminarsAction } =
   seminarsSlice
 
-export const selectSeminars = (state: { seminars: { seminars: [] } }) =>
+export const selectSeminars = (state: { seminars: SeminarsInitialState }) =>
   state.seminars
 
 export default seminarsSlice.reducer
+
+axios.interceptors.response.use(
+  (response) => {
+    return response
+  },
+  (error) => {
+    if (axios.isAxiosError(error)) {
+      store.dispatch(setToast({ type: 'error', message: error.message }))
+      throw new AxiosError(error.message)
+    } else if (error instanceof Error) {
+      store.dispatch(setToast({ type: 'error', message: error.stack }))
+      throw new Error(error.stack)
+    }
+    throw error
+  }
+)
