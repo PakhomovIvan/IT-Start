@@ -111,7 +111,7 @@ const SeminarEditForm = ({
           dispatch(
             setToast({
               type: 'success',
-              message: 'Запись семинара отредактирована',
+              message: 'Запись отредактирована',
             })
           )
         )
@@ -178,7 +178,6 @@ const SeminarEditForm = ({
                 id="photo"
                 value={formValues.photo}
                 onChange={handleChange}
-                icon={() => <i className="pi pi-link" />}
                 required
               />
               <label form="photo">Логотип</label>

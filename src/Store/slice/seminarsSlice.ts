@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import axios from 'axios'
-import { SeminarEditFromValues } from '../../Common/Models/seminars/SeminarEditFromValues'
 import { Seminars } from '../../Common/Models/seminars/Seminars'
 import { SeminarsInitialState } from '../../Common/Models/seminars/SeminarsInitialState'
 
@@ -19,7 +18,7 @@ export const fetchSeminars = createAsyncThunk(
 export const patchSeminar = createAsyncThunk(
   'seminars/patchSeminar',
   async ({ id, title, description, date, time, photo }: Seminars) => {
-    const res = await axios.patch<SeminarEditFromValues>(
+    const res = await axios.patch<Seminars>(
       `${import.meta.env.VITE_API_URL}/${id}`,
       {
         title,
