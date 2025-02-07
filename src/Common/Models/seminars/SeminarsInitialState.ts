@@ -1,5 +1,5 @@
-import { Seminars } from './Seminars'
+import { Seminar } from './Seminar'
 
 export interface SeminarsInitialState {
-  seminars: Seminars[]
+  seminars: Seminar[]
 }

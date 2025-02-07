@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import axios from 'axios'
-import { Seminars } from '../../Common/Models/seminars/Seminars'
+import { Seminar } from '../../Common/Models/seminars/Seminar'
 import { SeminarsInitialState } from '../../Common/Models/seminars/SeminarsInitialState'
 
 const initialState: SeminarsInitialState = {
@@ -10,15 +10,15 @@ const initialState: SeminarsInitialState = {
 export const fetchSeminars = createAsyncThunk(
   'seminars/fetchSeminars',
   async (url: string) => {
-    const res = await axios.get<Seminars[]>(url)
+    const res = await axios.get<Seminar[]>(url)
     return res.data
   }
 )
 
 export const patchSeminar = createAsyncThunk(
   'seminars/patchSeminar',
-  async ({ id, title, description, date, time, photo }: Seminars) => {
-    const res = await axios.patch<Seminars>(
+  async ({ id, title, description, date, time, photo }: Seminar) => {
+    const res = await axios.patch<Seminar>(
       `${import.meta.env.VITE_API_URL}/${id}`,
       {
         title,
@@ -57,13 +57,13 @@ const seminarsSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(
       fetchSeminars.fulfilled,
-      (state, action: PayloadAction<Seminars[]>) => {
+      (state, action: PayloadAction<Seminar[]>) => {
         state.seminars = action.payload
       }
     )
     builder.addCase(
       patchSeminar.fulfilled,
-      (state, action: PayloadAction<Seminars>) => {
+      (state, action: PayloadAction<Seminar>) => {
         state.seminars = state.seminars.map((seminar) =>
           seminar.id === action.payload.id ? action.payload : seminar
         )

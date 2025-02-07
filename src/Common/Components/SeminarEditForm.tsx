@@ -70,7 +70,6 @@ const SeminarEditForm = ({
   }
 
   const handleDateChange = (e: CalendarEvent) => {
-    console.log(e)
     setFormValues((prevValues) => ({
       ...prevValues,
       date: e.value as Date | null,
@@ -78,7 +77,6 @@ const SeminarEditForm = ({
   }
 
   const handleTimeChange = (e: CalendarEvent) => {
-    console.log(e)
     setFormValues((prevValues) => ({
       ...prevValues,
       time: e.value as Date | null,
@@ -87,6 +85,19 @@ const SeminarEditForm = ({
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault()
+
+    const { title, description, date, time, photo } = formValues
+
+    if (!title || !description || !date || !time || !photo) {
+      dispatch(
+        setToast({
+          type: 'warn',
+          message: 'Все поля обязательны для заполнения',
+        })
+      )
+      return
+    }
+
     dispatch(showSpinner())
     if (seminar) {
       const formatDate = formValues.date
@@ -129,7 +140,6 @@ const SeminarEditForm = ({
               id="title"
               value={formValues.title}
               onChange={handleChange}
-              required
             />
             <label form="title">Название</label>
           </FloatLabel>
@@ -138,7 +148,6 @@ const SeminarEditForm = ({
               id="description"
               value={formValues.description}
               onChange={handleChange}
-              required
             />
             <label form="description">Описание</label>
           </FloatLabel>
@@ -153,7 +162,6 @@ const SeminarEditForm = ({
               dateFormat="dd.mm.yy"
               icon={() => <i className="pi pi-calendar" />}
               showIcon
-              required
             />
             <label form="date">Дата</label>
           </FloatLabel>
@@ -167,7 +175,6 @@ const SeminarEditForm = ({
               hourFormat="24"
               showIcon
               icon={() => <i className="pi pi-clock" />}
-              required
             />
             <label form="time">Время</label>
           </FloatLabel>
@@ -179,7 +186,6 @@ const SeminarEditForm = ({
                 id="photo"
                 value={formValues.photo}
                 onChange={handleChange}
-                required
               />
               <label form="photo">Логотип</label>
               <span className="p-inputgroup-addon">URL</span>

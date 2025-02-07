@@ -6,7 +6,7 @@ import { Dialog } from 'primereact/dialog'
 import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import SeminarEditForm from '../../Common/Components/SeminarEditForm'
-import { Seminars } from '../../Common/Models/seminars/Seminars'
+import { Seminar } from '../../Common/Models/seminars/Seminar'
 import {
   deleteSeminar,
   fetchSeminars,
@@ -22,7 +22,7 @@ const SeminarsListPage = () => {
   const seminars = useSelector(selectSeminars)
   const confirmPopupRef = useRef(null)
   const [visibleModal, setVisibleModal] = useState<boolean>(false)
-  const [selectedSeminar, setSelectedSeminar] = useState<Seminars | null>(null)
+  const [selectedSeminar, setSelectedSeminar] = useState<Seminar | null>(null)
 
   useEffect(() => {
     dispatch(showSpinner())
@@ -31,7 +31,7 @@ const SeminarsListPage = () => {
     )
   }, [dispatch])
 
-  const tableImageBody = (seminars: Seminars) => {
+  const tableImageBody = (seminars: Seminar) => {
     return (
       <img
         src={`${seminars.photo}`}
@@ -70,12 +70,12 @@ const SeminarsListPage = () => {
     })
   }
 
-  const openEditModal = (seminar: Seminars) => {
+  const openEditModal = (seminar: Seminar) => {
     setSelectedSeminar(seminar)
     setVisibleModal(true)
   }
 
-  const tableActionBody = (rowData: Seminars) => {
+  const tableActionBody = (rowData: Seminar) => {
     return (
       <div className="actions">
         <Button

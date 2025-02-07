@@ -1,6 +1,6 @@
-import { Seminars } from './Seminars'
+import { Seminar } from './Seminar'
 
 export interface SeminarEditFormProps {
-  seminar: Seminars | null
+  seminar: Seminar | null
   setVisibleModal: (visible: boolean) => void
 }

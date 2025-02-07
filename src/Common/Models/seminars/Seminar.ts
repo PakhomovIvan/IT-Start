@@ -1,4 +1,4 @@
-export interface Seminars {
+export interface Seminar {
   id: number
   title: string
   description: string

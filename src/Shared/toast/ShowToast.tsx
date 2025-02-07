@@ -1,9 +1,9 @@
+import { Toast } from 'primereact/toast'
 import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Toast } from 'primereact/toast'
-import { ToastParams } from './ToastParams'
 import { clearToast, selectToastMessage } from '../../Store/slice/toastSlice'
 import { AppDispatch, RootState } from '../../Store/store'
+import { ToastParams } from './ToastParams'
 
 const ShowToast: React.FC = () => {
   const toast = useRef<Toast>(null)
