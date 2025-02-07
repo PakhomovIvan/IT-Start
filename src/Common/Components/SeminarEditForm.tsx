@@ -1,10 +1,12 @@
+import moment from 'moment'
 import { Button } from 'primereact/button'
-import { Calendar } from 'primereact/calendar'
+import { Calendar, CalendarChangeEvent } from 'primereact/calendar'
 import { FloatLabel } from 'primereact/floatlabel'
 import { InputText } from 'primereact/inputtext'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { patchSeminar } from '../../Store/slice/seminarsSlice'
+import { hideSpinner, showSpinner } from '../../Store/slice/spinnerSlice'
 import { AppDispatch } from '../../Store/store'
 import { SeminarEditFormProps } from '../Models/seminars/SeminarEditFormProps'
 import { SeminarEditFromValues } from '../Models/seminars/SeminarEditFromValues'
@@ -26,6 +28,7 @@ const SeminarEditForm = ({
   useEffect(() => {
     if (seminar) {
       let time: Date | null = null
+
       if (seminar.time) {
         const [hours, minutes] = seminar.time.toString().split(':').map(Number)
         const now = new Date()
@@ -38,10 +41,17 @@ const SeminarEditForm = ({
         )
       }
 
+      const parsedDate =
+        typeof seminar.date === 'string'
+          ? moment(seminar.date, 'DD.MM.YYYY').toDate()
+          : seminar.date instanceof Date
+          ? new Date(seminar.date)
+          : null
+
       setFormValues({
         title: seminar.title,
         description: seminar.description,
-        date: new Date(seminar.date),
+        date: parsedDate,
         time: time,
         photo: seminar.photo,
       })
@@ -56,14 +66,14 @@ const SeminarEditForm = ({
     }))
   }
 
-  const handleDateChange = (e) => {
+  const handleDateChange = (e: CalendarChangeEvent) => {
     setFormValues((prevValues) => ({
       ...prevValues,
       date: e.value || null,
     }))
   }
 
-  const handleTimeChange = (e) => {
+  const handleTimeChange = (e: CalendarChangeEvent) => {
     setFormValues((prevValues) => ({
       ...prevValues,
       time: e.value || null,
@@ -72,16 +82,16 @@ const SeminarEditForm = ({
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault()
+    dispatch(showSpinner())
     if (seminar) {
       const formatDate = formValues.date
-        ? formValues.date.toLocaleDateString('ru-RU')
+        ? moment(formValues.date).format('DD.MM.YYYY')
         : ''
+
       const formatTime = formValues.time
-        ? formValues.time.toLocaleTimeString('ru-RU', {
-            hour: '2-digit',
-            minute: '2-digit',
-          })
+        ? moment(formValues.time).format('HH:mm')
         : ''
+
       dispatch(
         patchSeminar({
           id: seminar.id,
@@ -91,7 +101,9 @@ const SeminarEditForm = ({
           time: formatTime,
           photo: formValues.photo,
         })
-      ).then(() => setVisibleModal(false))
+      )
+        .then(() => setVisibleModal(false))
+        .finally(() => dispatch(hideSpinner()))
     }
   }
 
