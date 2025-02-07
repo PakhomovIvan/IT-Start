@@ -1,12 +1,13 @@
 import moment from 'moment'
 import { Button } from 'primereact/button'
-import { Calendar, CalendarChangeEvent } from 'primereact/calendar'
+import { Calendar, CalendarViewChangeEvent } from 'primereact/calendar'
 import { FloatLabel } from 'primereact/floatlabel'
 import { InputText } from 'primereact/inputtext'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { patchSeminar } from '../../Store/slice/seminarsSlice'
 import { hideSpinner, showSpinner } from '../../Store/slice/spinnerSlice'
+import { setToast } from '../../Store/slice/toastSlice'
 import { AppDispatch } from '../../Store/store'
 import { SeminarEditFormProps } from '../Models/seminars/SeminarEditFormProps'
 import { SeminarEditFromValues } from '../Models/seminars/SeminarEditFromValues'
@@ -53,6 +54,7 @@ const SeminarEditForm = ({
         description: seminar.description,
         date: parsedDate,
         time: time,
+
         photo: seminar.photo,
       })
     }
@@ -66,17 +68,19 @@ const SeminarEditForm = ({
     }))
   }
 
-  const handleDateChange = (e: CalendarChangeEvent) => {
+  const handleDateChange = (e: { value: Date }) => {
+    console.log(e)
     setFormValues((prevValues) => ({
       ...prevValues,
-      date: e.value || null,
+      date: e.value,
     }))
   }
 
-  const handleTimeChange = (e: CalendarChangeEvent) => {
+  const handleTimeChange = (e: CalendarViewChangeEvent) => {
+    console.log(e)
     setFormValues((prevValues) => ({
       ...prevValues,
-      time: e.value || null,
+      time: e.value,
     }))
   }
 
@@ -103,6 +107,14 @@ const SeminarEditForm = ({
         })
       )
         .then(() => setVisibleModal(false))
+        .then(() =>
+          dispatch(
+            setToast({
+              type: 'success',
+              message: 'Запись семинара отредактирована',
+            })
+          )
+        )
         .finally(() => dispatch(hideSpinner()))
     }
   }
@@ -110,61 +122,77 @@ const SeminarEditForm = ({
   return (
     <form className="form-wrapper">
       <div className="edit-form">
-        <FloatLabel>
-          <InputText
-            id="title"
-            value={formValues.title}
-            onChange={handleChange}
-            required
-          />
-          <label form="title">Название</label>
-        </FloatLabel>
-        <FloatLabel id="description">
-          <InputText
-            id="description"
-            value={formValues.description}
-            onChange={handleChange}
-            required
-          />
-          <label form="description">Описание</label>
-        </FloatLabel>
-        <FloatLabel id="date">
-          <Calendar
-            id="date"
-            value={formValues.date}
-            onChange={handleDateChange}
-            dateFormat="dd.mm.yy"
-            required
-          />
-          <label form="date">Дата</label>
-        </FloatLabel>
-        <FloatLabel id="time">
-          <Calendar
-            id="time"
-            value={formValues.time}
-            onChange={handleTimeChange}
-            timeOnly
-            hourFormat="24"
-            required
-          />
-          <label form="time">Время</label>
-        </FloatLabel>
+        <div className="input-text">
+          <FloatLabel>
+            <InputText
+              id="title"
+              value={formValues.title}
+              onChange={handleChange}
+              required
+            />
+            <label form="title">Название</label>
+          </FloatLabel>
+          <FloatLabel id="description">
+            <InputText
+              id="description"
+              value={formValues.description}
+              onChange={handleChange}
+              required
+            />
+            <label form="description">Описание</label>
+          </FloatLabel>
+        </div>
+        <div className="input-date">
+          <FloatLabel id="date">
+            <Calendar
+              id="date"
+              value={formValues.date}
+              onChange={handleDateChange}
+              placeholder="Выберите дату"
+              dateFormat="dd.mm.yy"
+              icon={() => <i className="pi pi-calendar" />}
+              showIcon
+              required
+            />
+            <label form="date">Дата</label>
+          </FloatLabel>
+          <FloatLabel id="time">
+            <Calendar
+              id="time"
+              value={formValues.time}
+              onChange={handleTimeChange}
+              placeholder="Установите время"
+              timeOnly
+              hourFormat="24"
+              showIcon
+              icon={() => <i className="pi pi-clock" />}
+              required
+            />
+            <label form="time">Время</label>
+          </FloatLabel>
+        </div>
+        <div className="input-photo">
+          <div className="p-inputgroup flex-1">
+            <FloatLabel id="photo">
+              <InputText
+                id="photo"
+                value={formValues.photo}
+                onChange={handleChange}
+                icon={() => <i className="pi pi-link" />}
+                required
+              />
+              <label form="photo">Логотип</label>
+              <span className="p-inputgroup-addon">URL</span>
+            </FloatLabel>
+          </div>
+        </div>
       </div>
-      <FloatLabel id="photo">
-        <InputText
-          id="photo"
-          value={formValues.photo}
-          onChange={handleChange}
-          required
-        />
-        <label form="photo">URL Логотипа</label>
-      </FloatLabel>
       <img
         className="preview-photo"
         src={formValues.photo}
         alt="Не удалось загрузить изображение"
       />
-      <Button label="Сохранить" onClick={handleSubmit} />
+      <Button id="submit" label="Сохранить" onClick={handleSubmit} />
     </form>
   )
 }
