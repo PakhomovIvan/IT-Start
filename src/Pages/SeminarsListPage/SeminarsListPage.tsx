@@ -2,8 +2,10 @@ import { Button } from 'primereact/button'
 import { Column } from 'primereact/column'
 import { ConfirmPopup, confirmPopup } from 'primereact/confirmpopup'
 import { DataTable } from 'primereact/datatable'
-import { useEffect, useRef } from 'react'
+import { Dialog } from 'primereact/dialog'
+import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import SeminarEditForm from '../../Common/Components/SeminarEditForm'
 import { Seminars } from '../../Common/Models/seminars/Seminars'
 import {
   deleteSeminar,
@@ -19,6 +21,8 @@ const SeminarsListPage = () => {
   const dispatch: AppDispatch = useDispatch()
   const seminars = useSelector(selectSeminars)
   const confirmPopupRef = useRef(null)
+  const [visibleModal, setVisibleModal] = useState<boolean>(false)
+  const [selectedSeminar, setSelectedSeminar] = useState<Seminars | null>(null)
 
   useEffect(() => {
     dispatch(showSpinner())
@@ -44,14 +48,10 @@ const SeminarsListPage = () => {
     dispatch(deleteSeminar(id))
       .then(() =>
         dispatch(
-          setToast({ type: 'success', message: 'Запись семинара удалена!' })
+          setToast({ type: 'success', message: 'Запись семинара удалена' })
         )
       )
       .finally(() => dispatch(hideSpinner()))
-  }
-
-  const reject = () => {
-    dispatch(setToast({ type: 'info', message: 'Вы отменили удаление записи' }))
   }
 
   const showPopap = (
@@ -67,8 +67,12 @@ const SeminarsListPage = () => {
       rejectIcon: 'pi pi-times',
       rejectLabel: 'Нет',
       accept: () => accept(id),
-      reject: reject,
     })
+  }
+
+  const openEditModal = (seminar: Seminars) => {
+    setSelectedSeminar(seminar)
+    setVisibleModal(true)
   }
 
   const tableActionBody = (rowData: Seminars) => {
@@ -80,14 +84,15 @@ const SeminarsListPage = () => {
           severity="success"
           aria-label="Редактировать запись"
           rounded
+          onClick={() => openEditModal(rowData)}
         ></Button>
         <Button
           type="button"
           icon="pi pi-trash"
           severity="danger"
-          onClick={(e) => showPopap(e, rowData.id)}
           aria-label="Удалить запись"
           rounded
+          onClick={(e) => showPopap(e, rowData.id)}
         ></Button>
       </div>
     )
@@ -98,20 +103,40 @@ const SeminarsListPage = () => {
       <h1>Расписание семинаров</h1>
       <ConfirmPopup ref={confirmPopupRef} />
       {seminars && (
-        <DataTable
-          value={seminars.seminars}
-          emptyMessage="Список семинаров пуст"
-          scrollable
-          scrollHeight="80vh"
-        >
-          <Column field="id" header="ID"></Column>
-          <Column header="Фото" body={tableImageBody}></Column>
-          <Column field="title" header="Название"></Column>
-          <Column field="description" header="Описание"></Column>
-          <Column field="date" header="Дата"></Column>
-          <Column field="time" header="Время"></Column>
-          <Column header="Действия" body={tableActionBody}></Column>
-        </DataTable>
+        <>
+          <DataTable
+            value={seminars.seminars}
+            emptyMessage="Список семинаров пуст"
+            scrollable
+            scrollHeight="80vh"
+          >
+            <Column field="id" header="ID"></Column>
+            <Column body={tableImageBody}></Column>
+            <Column field="title" header="Название"></Column>
+            <Column field="description" header="Описание"></Column>
+            <Column field="date" header="Дата"></Column>
+            <Column field="time" header="Время"></Column>
+            <Column body={tableActionBody}></Column>
+          </DataTable>
+          <Dialog
+            header="Редактирование семинара"
+            visible={visibleModal}
+            blockScroll
+            modal
+            style={{ width: '50vw', textAlign: 'center' }}
+            onHide={() => {
+              if (!visibleModal) return
+              setVisibleModal(false)
+            }}
+          >
+            <div className="m-2">
+              <SeminarEditForm
+                seminar={selectedSeminar}
+                setVisibleModal={setVisibleModal}
+              />
+            </div>
+          </Dialog>
+        </>
       )}
     </div>
   )
