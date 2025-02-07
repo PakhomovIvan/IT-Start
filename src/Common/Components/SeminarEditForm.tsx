@@ -1,10 +1,11 @@
 import moment from 'moment'
 import { Button } from 'primereact/button'
-import { Calendar, CalendarViewChangeEvent } from 'primereact/calendar'
+import { Calendar } from 'primereact/calendar'
 import { FloatLabel } from 'primereact/floatlabel'
 import { InputText } from 'primereact/inputtext'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
+import { CalendarEvent } from '../../Shared/calendar/CalendarIvent'
 import { patchSeminar } from '../../Store/slice/seminarsSlice'
 import { hideSpinner, showSpinner } from '../../Store/slice/spinnerSlice'
 import { setToast } from '../../Store/slice/toastSlice'
@@ -68,19 +69,19 @@ const SeminarEditForm = ({
     }))
   }
 
-  const handleDateChange = (e: { value: Date }) => {
+  const handleDateChange = (e: CalendarEvent) => {
     console.log(e)
     setFormValues((prevValues) => ({
       ...prevValues,
-      date: e.value,
+      date: e.value as Date | null,
     }))
   }
 
-  const handleTimeChange = (e: CalendarViewChangeEvent) => {
+  const handleTimeChange = (e: CalendarEvent) => {
     console.log(e)
     setFormValues((prevValues) => ({
       ...prevValues,
-      time: e.value,
+      time: e.value as Date | null,
     }))
   }
 
