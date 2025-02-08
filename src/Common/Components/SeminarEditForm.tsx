@@ -88,7 +88,13 @@ const SeminarEditForm = ({
 
     const { title, description, date, time, photo } = formValues
 
-    if (!title || !description || !date || !time || !photo) {
+    if (
+      !title.trim() ||
+      !description.trim() ||
+      !date ||
+      !time ||
+      !photo.trim()
+    ) {
       dispatch(
         setToast({
           type: 'warn',

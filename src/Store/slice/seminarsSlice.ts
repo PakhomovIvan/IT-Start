@@ -18,7 +18,7 @@ export const fetchSeminars = createAsyncThunk(
 export const patchSeminar = createAsyncThunk(
   'seminars/patchSeminar',
   async ({ id, title, description, date, time, photo }: Seminar) => {
-    const res = await axios.patch<Seminar>(
+    const res = await axios.put<Seminar>(
       `${import.meta.env.VITE_API_URL}/${id}`,
       {
         title,
