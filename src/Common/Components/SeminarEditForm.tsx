@@ -6,7 +6,7 @@ import { InputText } from 'primereact/inputtext'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { CalendarEvent } from '../../Shared/calendar/CalendarIvent'
-import { patchSeminar } from '../../Store/slice/seminarsSlice'
+import { fetchSeminars, patchSeminar } from '../../Store/slice/seminarsSlice'
 import { hideSpinner, showSpinner } from '../../Store/slice/spinnerSlice'
 import { setToast } from '../../Store/slice/toastSlice'
 import { AppDispatch } from '../../Store/store'
@@ -118,15 +118,16 @@ const SeminarEditForm = ({
           photo: formValues.photo,
         })
       )
-        .then(() => setVisibleModal(false))
-        .then(() =>
+        .then(() => {
+          dispatch(fetchSeminars(import.meta.env.VITE_API_URL))
+          setVisibleModal(false)
           dispatch(
             setToast({
               type: 'success',
               message: 'Запись отредактирована',
             })
           )
-        )
+        })
         .finally(() => dispatch(hideSpinner()))
     }
   }

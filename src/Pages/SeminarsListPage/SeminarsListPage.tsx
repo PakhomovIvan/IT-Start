@@ -46,11 +46,15 @@ const SeminarsListPage = () => {
   const accept = (id: number) => {
     dispatch(showSpinner())
     dispatch(deleteSeminar(id))
-      .then(() =>
+      .then(() => {
+        dispatch(fetchSeminars(import.meta.env.VITE_API_URL))
         dispatch(
-          setToast({ type: 'success', message: 'Запись семинара удалена' })
+          setToast({
+            type: 'success',
+            message: 'Запись удалена',
+          })
         )
-      )
+      })
       .finally(() => dispatch(hideSpinner()))
   }
 
