@@ -124,6 +124,7 @@ const SeminarEditForm = ({
           photo: formValues.photo,
         })
       )
+        .unwrap()
         .then(() => {
           dispatch(fetchSeminars(import.meta.env.VITE_API_URL))
           setVisibleModal(false)
@@ -134,6 +135,14 @@ const SeminarEditForm = ({
             })
           )
         })
+        .catch(() =>
+          dispatch(
+            setToast({
+              type: 'error',
+              message: 'Ошибка редактирования записи',
+            })
+          )
+        )
         .finally(() => dispatch(hideSpinner()))
     }
   }

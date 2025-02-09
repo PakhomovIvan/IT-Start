@@ -46,6 +46,7 @@ const SeminarsListPage = () => {
   const accept = (id: number) => {
     dispatch(showSpinner())
     dispatch(deleteSeminar(id))
+      .unwrap()
       .then(() => {
         dispatch(fetchSeminars(import.meta.env.VITE_API_URL))
         dispatch(
@@ -55,6 +56,14 @@ const SeminarsListPage = () => {
           })
         )
       })
+      .catch(() =>
+        dispatch(
+          setToast({
+            type: 'error',
+            message: 'Запись не была удалена',
+          })
+        )
+      )
       .finally(() => dispatch(hideSpinner()))
   }
 
