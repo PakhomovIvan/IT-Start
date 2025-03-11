@@ -3,6 +3,7 @@ import { Column } from 'primereact/column'
 import { ConfirmPopup, confirmPopup } from 'primereact/confirmpopup'
 import { DataTable } from 'primereact/datatable'
 import { Dialog } from 'primereact/dialog'
+import { Image } from 'primereact/image'
 import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import SeminarEditForm from '../../Common/Components/SeminarEditForm'
@@ -33,12 +34,16 @@ const SeminarsListPage = () => {
 
   const tableImageBody = (seminars: Seminar) => {
     return (
-      <img
-        src={`${seminars.photo}`}
-        alt={seminars.title}
-        className="photo"
-        title={seminars.title}
-        width={50}
+      <Image
+        src={seminars.photo ? seminars.photo : '/image/no-image.png'}
+        onError={({ currentTarget }) =>
+          currentTarget instanceof HTMLImageElement
+            ? (currentTarget.src = '/image/no-image.png')
+            : ''
+        }
+        alt="seminar-image"
+        width="50"
+        preview
       />
     )
   }

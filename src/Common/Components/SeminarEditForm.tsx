@@ -2,6 +2,7 @@ import moment from 'moment'
 import { Button } from 'primereact/button'
 import { Calendar } from 'primereact/calendar'
 import { FloatLabel } from 'primereact/floatlabel'
+import { Image } from 'primereact/image'
 import { InputText } from 'primereact/inputtext'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
@@ -209,10 +210,16 @@ const SeminarEditForm = ({
           </div>
         </div>
       </div>
-      <img
-        className="preview-photo"
-        src={formValues.photo}
-        alt="Не удалось загрузить изображение"
+      <Image
+        src={formValues.photo ? formValues.photo : '/image/no-image.png'}
+        onError={({ currentTarget }) =>
+          currentTarget instanceof HTMLImageElement
+            ? (currentTarget.src = '/image/no-image.png')
+            : ''
+        }
+        alt="seminar-image"
+        width="230"
+        preview
       />
       <Button id="submit" label="Сохранить" onClick={handleSubmit} />
     </form>

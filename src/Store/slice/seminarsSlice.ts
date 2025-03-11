@@ -69,7 +69,6 @@ const seminarsSlice = createSlice({
         )
       }
     )
-
     builder.addCase(
       deleteSeminar.fulfilled,
       (state, action: PayloadAction<number>) => {
